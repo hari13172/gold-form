@@ -169,3 +169,12 @@ label {
 .cancel-button:hover {
   background-color: #999;
 }
+
+.due-button {
+  background-color: yellow;
+  border: none;
+  outline: none;
+  margin-top: 10px;
+  width: 30%;
+  padding: 8px;
+}

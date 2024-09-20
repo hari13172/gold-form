@@ -18,28 +18,21 @@ interface FormData {
 }
 
 function Create() {
-    const [submittedData, setSubmittedData] = useState<{ [key: string]: FormData }>({}); // Store submitted data
-    const [searchTerm, setSearchTerm] = useState<string>(""); // Store search term for phone number
-    const [filteredData, setFilteredData] = useState<FormData[]>([]); // Store filtered data based on search
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Manage delete modal visibility
-    const [selectedEntry, setSelectedEntry] = useState<FormData | null>(null); // Store the entry to be deleted
+    const [submittedData, setSubmittedData] = useState<{ [key: string]: FormData }>({});
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [filteredData, setFilteredData] = useState<FormData[]>([]);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [selectedEntry, setSelectedEntry] = useState<FormData | null>(null);
     const navigate = useNavigate();
 
-    // Clear localStorage when the component mounts
-    useEffect(() => {
-        localStorage.clear(); // Clear localStorage to remove old data
-    }, []);
-
-    // Load data from Firebase on component mount
     useEffect(() => {
         const entriesRef = ref(database, "entries");
         onValue(entriesRef, (snapshot) => {
             const data = snapshot.val() || {};
-            setSubmittedData(data); // Load previously submitted data into state
+            setSubmittedData(data);
         });
     }, []);
 
-    // Update filtered data when search term or submitted data changes
     useEffect(() => {
         const filtered = Object.values(submittedData).filter((data) =>
             data.phoneNumber.includes(searchTerm)
@@ -48,29 +41,26 @@ function Create() {
     }, [searchTerm, submittedData]);
 
     const handleNavigateToForm = () => {
-        navigate("/form"); // Navigate to the form page
+        navigate("/form");
     };
 
-    // Navigate to the form page with pre-filled data for editing
     const handleEdit = (data: FormData) => {
         navigate("/form", { state: { formData: data, isEdit: true } });
     };
 
-    // Show the confirmation modal for deleting an entry
     const handleDeleteClick = (data: FormData) => {
         setSelectedEntry(data);
-        setIsDeleteModalOpen(true); // Show the delete confirmation modal
+        setIsDeleteModalOpen(true);
     };
 
-    // Confirm and delete the entry
     const handleDeleteConfirm = () => {
         if (selectedEntry) {
             const entryRef = ref(database, `entries/${selectedEntry.applicationNumber}`);
             remove(entryRef)
                 .then(() => {
                     alert(`Entry with Application Number ${selectedEntry.applicationNumber} deleted successfully.`);
-                    setIsDeleteModalOpen(false); // Close the modal after deletion
-                    setSelectedEntry(null); // Clear the selected entry
+                    setIsDeleteModalOpen(false);
+                    setSelectedEntry(null);
                 })
                 .catch((error) => {
                     console.error("Error deleting entry: ", error);
@@ -78,9 +68,13 @@ function Create() {
         }
     };
 
-    // Handle search input change
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
+    };
+
+    // Navigate to Due Date page
+    const handleNavigateToDueDate = () => {
+        navigate("/duedate");
     };
 
     return (
@@ -105,9 +99,16 @@ function Create() {
                     <FaPlus className="icon" />
                     Add New Entry
                 </button>
+
+                <button
+                    type="button"
+                    className="due-button"
+                    onClick={handleNavigateToDueDate}
+                >
+                    Due Date
+                </button>
             </div>
 
-            {/* Separated Table Section */}
             <div className="table-container">
                 {filteredData.length > 0 ? (
                     <table className="table">
@@ -121,7 +122,7 @@ function Create() {
                                 <th>Start Date</th>
                                 <th>End Date</th>
                                 <th>Phone Number</th>
-                                <th>Actions</th> {/* New column for actions */}
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -158,7 +159,6 @@ function Create() {
                 )}
             </div>
 
-            {/* Delete confirmation modal */}
             {isDeleteModalOpen && (
                 <div className="modal">
                     <div className="modal-content">
