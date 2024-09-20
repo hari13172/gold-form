@@ -1,6 +1,9 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Signin.css";
+// Import Firebase Auth
+import { auth } from "../firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 // Define form data structure
 interface FormData {
@@ -28,10 +31,6 @@ function Signin() {
     const [loginError, setLoginError] = useState<string>("");
 
     const navigate = useNavigate(); // Initialize the navigate function from React Router
-
-    // Hardcoded credentials
-    const predefinedEmail = "user@example.com";
-    const predefinedPassword = "password123";
 
     // Handle input changes
     const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -71,14 +70,17 @@ function Signin() {
     const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
         e.preventDefault();
         if (validateForm()) {
-            // Check if the entered email and password match the hardcoded credentials
-            if (formData.email === predefinedEmail && formData.password === predefinedPassword) {
-                console.log("User signed in successfully");
-                // Navigate to dashboard after successful login
-                navigate("/create");
-            } else {
-                setLoginError("Invalid email or password.");
-            }
+            // Replace hardcoded email/password check with Firebase sign-in
+            signInWithEmailAndPassword(auth, formData.email, formData.password)
+                .then((userCredential) => {
+                    console.log("User signed in successfully", userCredential.user);
+                    // Navigate to dashboard after successful login
+                    navigate("/create");
+                })
+                .catch((error) => {
+                    console.error("Error signing in:", error);
+                    setLoginError("Failed to sign in. Please check your credentials.");
+                });
         }
     };
 
@@ -97,7 +99,9 @@ function Signin() {
                             onChange={handleChange}
                             className={errors.email ? "error-input" : ""}
                         />
-                        {errors.email && <span className="error-message">{errors.email}</span>}
+                        {errors.email && (
+                            <span className="error-message">{errors.email}</span>
+                        )}
                     </div>
 
                     <div className="form-group">
@@ -110,7 +114,9 @@ function Signin() {
                             onChange={handleChange}
                             className={errors.password ? "error-input" : ""}
                         />
-                        {errors.password && <span className="error-message">{errors.password}</span>}
+                        {errors.password && (
+                            <span className="error-message">{errors.password}</span>
+                        )}
                     </div>
 
                     {loginError && <p className="error-message">{loginError}</p>}
