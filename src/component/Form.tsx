@@ -1,6 +1,7 @@
 import { useState, FormEvent } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ref, update, set } from "firebase/database"; // Firebase methods for database
+// @ts-ignore
 import { database } from "../firebase"; // Import Firebase database
 import '../styles/Form.css';
 
@@ -18,7 +19,7 @@ interface FormData {
 function Form() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { formData, isEdit } = location.state || {}; // Use formData and isEdit state passed from the Create component
+    const { formData, isEdit } = location.state || {};   // Use formData and isEdit state passed from the Create component
 
     // Form state
     const [applicationNumber, setApplicationNumber] = useState<string>(formData?.applicationNumber || "");
@@ -92,11 +93,11 @@ function Form() {
             try {
                 if (isEdit) {
                     // Update existing entry in Firebase (use `update` for editing)
-                    const entryRef = ref(database, `/entries/${applicationNumber}`);
+                    const entryRef = ref(database as any, `/entries/${applicationNumber}`);
                     await update(entryRef, newFormData);
                 } else {
                     // Create a new entry in Firebase (use `set` with a key to avoid duplicates)
-                    const entryRef = ref(database, `/entries/${applicationNumber}`);
+                    const entryRef = ref(database as any, `/entries/${applicationNumber}`);
                     await set(entryRef, newFormData);
                 }
 

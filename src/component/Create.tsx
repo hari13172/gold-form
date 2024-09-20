@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-import { ref, onValue, remove } from "firebase/database"; // Firebase methods for data handling
-import { database } from "../firebase"; // Import Firebase database
+import { ref, onValue, remove } from "firebase/database";
+// @ts-ignore
+import { database } from "../firebase";
+import "../styles/Create.css";
 
 interface FormData {
     applicationNumber: string;
@@ -19,11 +21,13 @@ function Create() {
     const [submittedData, setSubmittedData] = useState<{ [key: string]: FormData }>({}); // Store submitted data
     const [searchTerm, setSearchTerm] = useState<string>(""); // Store search term for phone number
     const [filteredData, setFilteredData] = useState<FormData[]>([]); // Store filtered data based on search
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Manage delete modal visibility
+    const [selectedEntry, setSelectedEntry] = useState<FormData | null>(null); // Store the entry to be deleted
     const navigate = useNavigate();
 
     // Clear localStorage when the component mounts
     useEffect(() => {
-        localStorage.clear();  // Clear localStorage to remove old data
+        localStorage.clear(); // Clear localStorage to remove old data
     }, []);
 
     // Load data from Firebase on component mount
@@ -52,16 +56,26 @@ function Create() {
         navigate("/form", { state: { formData: data, isEdit: true } });
     };
 
-    // Handle delete operation
-    const handleDelete = (applicationNumber: string) => {
-        const entryRef = ref(database, `entries/${applicationNumber}`);
-        remove(entryRef)
-            .then(() => {
-                alert(`Entry with Application Number ${applicationNumber} deleted successfully.`);
-            })
-            .catch((error) => {
-                console.error("Error deleting entry: ", error);
-            });
+    // Show the confirmation modal for deleting an entry
+    const handleDeleteClick = (data: FormData) => {
+        setSelectedEntry(data);
+        setIsDeleteModalOpen(true); // Show the delete confirmation modal
+    };
+
+    // Confirm and delete the entry
+    const handleDeleteConfirm = () => {
+        if (selectedEntry) {
+            const entryRef = ref(database, `entries/${selectedEntry.applicationNumber}`);
+            remove(entryRef)
+                .then(() => {
+                    alert(`Entry with Application Number ${selectedEntry.applicationNumber} deleted successfully.`);
+                    setIsDeleteModalOpen(false); // Close the modal after deletion
+                    setSelectedEntry(null); // Clear the selected entry
+                })
+                .catch((error) => {
+                    console.error("Error deleting entry: ", error);
+                });
+        }
     };
 
     // Handle search input change
@@ -71,28 +85,24 @@ function Create() {
 
     return (
         <>
-            {/* Search and Button Form */}
             <div className="container">
                 <h1>Submitted Data</h1>
 
-                {/* Search Bar for Phone Number */}
                 <div className="search-container">
                     <input
                         type="text"
                         placeholder="Search by phone number"
                         value={searchTerm}
                         onChange={handleSearchChange}
-                        className="search-bar"
                     />
                 </div>
 
-                {/* New Entry Button */}
                 <button
                     type="button"
                     className="submit-button"
                     onClick={handleNavigateToForm}
                 >
-                    <FaPlus className="icon" /> {/* Plus icon */}
+                    <FaPlus className="icon" />
                     Add New Entry
                 </button>
             </div>
@@ -134,7 +144,7 @@ function Create() {
                                         </button>
                                         <button
                                             className="delete-button"
-                                            onClick={() => handleDelete(data.applicationNumber)}
+                                            onClick={() => handleDeleteClick(data)}
                                         >
                                             <FaTrash />
                                         </button>
@@ -147,6 +157,20 @@ function Create() {
                     <p className="no-data">No data found.</p>
                 )}
             </div>
+
+            {/* Delete confirmation modal */}
+            {isDeleteModalOpen && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <h3>Are you sure you want to delete?</h3>
+                        <p>Entry with Application Number: {selectedEntry?.applicationNumber}</p>
+                        <div className="modal-actions">
+                            <button onClick={handleDeleteConfirm} className="confirm-button">Yes</button>
+                            <button onClick={() => setIsDeleteModalOpen(false)} className="cancel-button">No</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

@@ -1,5 +1,5 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import { useState, ChangeEvent, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/Signin.css";
 
 // Define form data structure
