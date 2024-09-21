@@ -161,6 +161,9 @@ label {
   border-radius: 4px;
   cursor: pointer;
 }
+.view-details-button {
+  margin-top: 5px;
+}
 
 .confirm-button:hover {
   background-color: #0056b3;

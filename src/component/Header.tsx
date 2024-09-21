@@ -19,7 +19,7 @@ const Header: React.FC = () => {
             <nav className="nav-menu">
                 <ul>
                     <li>
-                        <Link to="/create">Home</Link>
+                        <Link to="/create">Create</Link>
                     </li>
                     <li>
                         <Link to="/form">Add New</Link>

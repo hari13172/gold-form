@@ -29,15 +29,21 @@ function DueDate() {
 
     useEffect(() => {
         const entriesRef = ref(database, "entries");
+
+        // Fetch the data from Firebase
         onValue(entriesRef, (snapshot) => {
             const data = snapshot.val() || {};
-            const today = new Date();
 
-            // Filter the entries where the end date has passed
-            const filteredData = Object.values(data).filter((entry: FormData) => {
+            // Cast data to FormData[] before filtering
+            const entriesArray = Object.values(data) as FormData[];
+
+            // Filter entries based on some condition, e.g., if the end date has passed
+            const filteredData = entriesArray.filter((entry: FormData) => {
+                const today = new Date();
                 const endDate = new Date(entry.endDate);
-                return endDate < today;
+                return endDate < today; // Example: show due entries where endDate has passed
             });
+
 
             setDueEntries(filteredData);
         });

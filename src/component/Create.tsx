@@ -41,19 +41,13 @@ function Create() {
     const [paymentHistory, setPaymentHistory] = useState<Payment[]>([]);
     const navigate = useNavigate();
 
-    // Load data from Firebase and localStorage on component mount
+    // Load data from Firebase on component mount
     useEffect(() => {
         const entriesRef = ref(database, "entries");
         onValue(entriesRef, (snapshot) => {
             const data = snapshot.val() || {};
-            setSubmittedData(data);
+            setSubmittedData(data); // Set state with fresh data from Firebase
         });
-
-        // Load from localStorage
-        const cachedData = localStorage.getItem('submittedData');
-        if (cachedData) {
-            setSubmittedData(JSON.parse(cachedData));
-        }
     }, []);
 
     useEffect(() => {
@@ -109,7 +103,7 @@ function Create() {
         setIsFinanceModalOpen(true);
     };
 
-    // Save the finance data into the selected entry and to Firebase & localStorage
+    // Save the finance data into the selected entry and update Firebase & local state immediately
     const handleFinanceSubmit = () => {
         if (selectedEntry) {
             // Add the current payment to the payment history
@@ -134,22 +128,18 @@ function Create() {
                 [selectedEntry.applicationNumber]: updatedEntry,
             };
 
-            // Debugging logs to verify data before saving to Firebase
-            console.log("Saving updated entry to Firebase:", updatedEntry);
-
             // Save to Firebase
             const entryRef = ref(database, `entries/${selectedEntry.applicationNumber}`);
             set(entryRef, updatedEntry)
                 .then(() => {
                     console.log("Data saved to Firebase successfully");
+                    // Update the state with the new entry data immediately
+                    setSubmittedData(newSubmittedData);
                 })
                 .catch((error) => {
                     console.error("Error saving to Firebase: ", error);
                 });
 
-            // Update the state and localStorage
-            setSubmittedData(newSubmittedData);
-            localStorage.setItem('submittedData', JSON.stringify(newSubmittedData));
         }
 
         setIsFinanceModalOpen(false);
