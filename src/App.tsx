@@ -6,6 +6,7 @@ import { AuthProvider } from "./Auth/AuthContext";
 import ProtectedRoute from "./Auth/ProtectedRoute";
 import DueDate from "./component/DueDate";
 import ViewDetails from "./component/ViewDetails";
+import './App.css'
 
 const App: React.FC = () => {
   return (
