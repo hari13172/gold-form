@@ -5,6 +5,7 @@ import Signin from "./Auth/Signin";
 import { AuthProvider } from "./Auth/AuthContext";
 import ProtectedRoute from "./Auth/ProtectedRoute";
 import DueDate from "./component/DueDate";
+import ViewDetails from "./component/ViewDetails";
 
 const App: React.FC = () => {
   return (
@@ -41,6 +42,15 @@ const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <DueDate />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/viewDetails"
+            element={
+              <ProtectedRoute>
+                <ViewDetails />
               </ProtectedRoute>
             }
           />

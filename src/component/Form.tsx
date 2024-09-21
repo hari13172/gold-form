@@ -4,6 +4,7 @@ import { ref, update, set } from "firebase/database"; // Firebase methods for da
 // @ts-ignore
 import { database } from "../firebase"; // Import Firebase database
 import '../styles/Form.css';
+import Header from "./Header";
 
 interface FormData {
     applicationNumber: string;
@@ -120,105 +121,108 @@ function Form() {
     };
 
     return (
-        <div className="container">
-            <form onSubmit={handleSubmit} className="form">
-                {/* Display validation errors */}
-                {errors.length > 0 && (
-                    <div className="error-messages">
-                        <ul>
-                            {errors.map((error, index) => (
-                                <li key={index} className="error-text">{error}</li>
-                            ))}
-                        </ul>
+        <>
+            <Header />
+            <div className="container">
+                <form onSubmit={handleSubmit} className="form">
+                    {/* Display validation errors */}
+                    {errors.length > 0 && (
+                        <div className="error-messages">
+                            <ul>
+                                {errors.map((error, index) => (
+                                    <li key={index} className="error-text">{error}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
+                    <div className="form-group">
+                        <label>Application Number</label>
+                        <input
+                            type="text"
+                            value={applicationNumber}
+                            onChange={(e) => setApplicationNumber(e.target.value)}
+                            className="input"
+                            disabled={isEdit} // Disable field when editing
+                        />
                     </div>
-                )}
 
-                <div className="form-group">
-                    <label>Application Number</label>
-                    <input
-                        type="text"
-                        value={applicationNumber}
-                        onChange={(e) => setApplicationNumber(e.target.value)}
-                        className="input"
-                        disabled={isEdit} // Disable field when editing
-                    />
-                </div>
+                    <div className="form-group">
+                        <label>Username</label>
+                        <input
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            className="input"
+                        />
+                    </div>
 
-                <div className="form-group">
-                    <label>Username</label>
-                    <input
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        className="input"
-                    />
-                </div>
+                    <div className="form-group">
+                        <label>Address</label>
+                        <input
+                            type="text"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                            className="input"
+                        />
+                    </div>
 
-                <div className="form-group">
-                    <label>Address</label>
-                    <input
-                        type="text"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        className="input"
-                    />
-                </div>
+                    <div className="form-group">
+                        <label>Gold Gram Weight</label>
+                        <input
+                            type="number"
+                            value={goldGramWeight}
+                            onChange={(e) => setGoldGramWeight(e.target.value)}
+                            className="input"
+                        />
+                    </div>
 
-                <div className="form-group">
-                    <label>Gold Gram Weight</label>
-                    <input
-                        type="number"
-                        value={goldGramWeight}
-                        onChange={(e) => setGoldGramWeight(e.target.value)}
-                        className="input"
-                    />
-                </div>
+                    <div className="form-group">
+                        <label>Amount</label>
+                        <input
+                            type="number"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            className="input"
+                        />
+                    </div>
 
-                <div className="form-group">
-                    <label>Amount</label>
-                    <input
-                        type="number"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        className="input"
-                    />
-                </div>
+                    <div className="form-group">
+                        <label>Phone Number</label>
+                        <input
+                            type="text"
+                            value={phoneNumber}
+                            onChange={(e) => setPhoneNumber(e.target.value)}
+                            className="input"
+                        />
+                    </div>
 
-                <div className="form-group">
-                    <label>Phone Number</label>
-                    <input
-                        type="text"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        className="input"
-                    />
-                </div>
+                    <div className="form-group">
+                        <label>Starting Date</label>
+                        <input
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            className="input"
+                        />
+                    </div>
 
-                <div className="form-group">
-                    <label>Starting Date</label>
-                    <input
-                        type="date"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                        className="input"
-                    />
-                </div>
+                    <div className="form-group">
+                        <label>Ending Date</label>
+                        <input
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            className="input"
+                        />
+                    </div>
 
-                <div className="form-group">
-                    <label>Ending Date</label>
-                    <input
-                        type="date"
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                        className="input"
-                    />
-                </div>
-
-                <button type="submit" className="submit-button">
-                    {isEdit ? "Update" : "Submit"}
-                </button>
-            </form>
-        </div>
+                    <button type="submit" className="submit-button">
+                        {isEdit ? "Update" : "Submit"}
+                    </button>
+                </form>
+            </div>
+        </>
     );
 }
 
