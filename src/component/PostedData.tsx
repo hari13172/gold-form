@@ -34,7 +34,6 @@ interface PostData {
 function PostedData() {
     const [posts, setPosts] = useState<PostData[]>([]);
     const [loading, setLoading] = useState(true);
-    const [minimizedPosts, setMinimizedPosts] = useState<{ [key: string]: boolean }>({});
     const [showModal, setShowModal] = useState(false);
     const [postToDelete, setPostToDelete] = useState<string | null>(null);
 
@@ -90,7 +89,7 @@ function PostedData() {
                         {posts.map((post) => (
                             <div key={post.key} className="post-card">
 
-                                {!minimizedPosts[post.key] && (
+                                {[post.key] && (
                                     <>
                                         <img src={post.imageUrl} alt="Posted" className="post-image" />
                                         <p className="post-description">{post.description}</p>
