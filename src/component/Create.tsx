@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-import { ref, onValue, remove, set } from "firebase/database"; // Import set for saving data
+import { ref, onValue, remove, set, update } from "firebase/database"; // Import set for saving data
 // @ts-ignore
 import { database } from "../firebase"; // Import your Firebase database instance
 import "../styles/Create.css";
@@ -26,6 +26,7 @@ interface FormData {
     receivedMoney?: number;
     pendingMoney?: number;
     paymentHistory?: Payment[];
+    status?: string;
 }
 
 function Create() {
@@ -194,6 +195,20 @@ function Create() {
         navigate("/viewdetails", { state: { ...data } });
     };
 
+
+    // Toggle status between "Pending" and "Completed"
+    const handleStatusToggle = (data: FormData) => {
+        const updatedStatus = data.status === "Completed" ? "Pending" : "Completed";
+        const entryRef = ref(database, `entries/${data.applicationNumber}`);
+        update(entryRef, { status: updatedStatus }) // Update the status in Firebase
+            .then(() => {
+                console.log("Status updated successfully.");
+            })
+            .catch((error) => {
+                console.error("Error updating status: ", error);
+            });
+    };
+
     // If the data is still loading, show the loading spinner
     if (isLoading) {
         return (
@@ -261,6 +276,7 @@ function Create() {
                                 <th>Start Date</th>
                                 <th>End Date</th>
                                 <th>Phone Number</th>
+                                <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -277,6 +293,23 @@ function Create() {
                                     <td>{data.startDate}</td>
                                     <td>{data.endDate}</td>
                                     <td>{data.phoneNumber}</td>
+                                    <td>
+                                        <select
+                                            value={data.status || "Pending"}
+                                            onChange={() => handleStatusToggle(data)}
+                                        >
+                                            <option value="Pending">Pending</option>
+                                            <option value="Completed">Completed</option>
+                                        </select>
+                                    </td>
+                                    {/* <td>
+                                        <div
+                                            className={`toggle ${data.status === "Completed" ? "completed" : "pending"}`}
+                                            onClick={() => handleStatusToggle(data)}
+                                        >
+                                            <div className="toggle-knob"></div>
+                                        </div>
+                                    </td> */}
                                     <td>
                                         <button
                                             className="edit-button"

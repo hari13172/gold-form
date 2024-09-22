@@ -15,6 +15,7 @@ interface FormData {
     startDate: string;
     endDate: string;
     phoneNumber: string;
+    status?: string;
 }
 
 function DueDate() {
@@ -41,7 +42,7 @@ function DueDate() {
             const filteredData = entriesArray.filter((entry: FormData) => {
                 const today = new Date();
                 const endDate = new Date(entry.endDate);
-                return endDate < today; // Example: show due entries where endDate has passed
+                return endDate < today && entry.status !== "Completed";
             });
 
 

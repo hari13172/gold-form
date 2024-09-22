@@ -6,6 +6,11 @@ import { database } from "../firebase"; // Import Firebase database
 import '../styles/Form.css';
 import Header from "./Header";
 
+interface Payment {
+    month: string;
+    amountPaid: number;
+}
+
 interface FormData {
     applicationNumber: string;
     username: string;
@@ -15,6 +20,10 @@ interface FormData {
     startDate: string;
     endDate: string;
     phoneNumber: string;
+    borrowedMoney?: number;
+    receivedMoney?: number;
+    pendingMoney?: number;
+    paymentHistory?: Payment[];
 }
 
 function Form() {
