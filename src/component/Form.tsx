@@ -1,6 +1,6 @@
 import { useState, FormEvent } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ref, update, set } from "firebase/database"; // Firebase methods for database
+import { ref, update, set, get } from "firebase/database"; // Firebase methods for database
 // @ts-ignore
 import { database } from "../firebase"; // Import Firebase database
 import '../styles/Form.css';
@@ -80,42 +80,48 @@ function Form() {
         e.preventDefault();
 
         if (validateForm()) {
-            const newFormData: FormData = {
-                applicationNumber,
-                username,
-                address,
-                goldGramWeight,
-                amount,
-                startDate,
-                endDate,
-                phoneNumber,
-            };
-
             try {
-                if (isEdit) {
-                    // Update existing entry in Firebase (use `update` for editing)
-                    const entryRef = ref(database as any, `/entries/${applicationNumber}`);
-                    await update(entryRef, newFormData);
+                const entryRef = ref(database, `/entries/${applicationNumber}`);
+                const snapshot = await get(entryRef);  // Check if the entry already exists
+
+                if (snapshot.exists() && !isEdit) {
+                    // If application number already exists and it's not in edit mode, show error
+                    setErrors(["Application number already exists. Please use a different one."]);
                 } else {
-                    // Create a new entry in Firebase (use `set` with a key to avoid duplicates)
-                    const entryRef = ref(database as any, `/entries/${applicationNumber}`);
-                    await set(entryRef, newFormData);
+                    const newFormData: FormData = {
+                        applicationNumber,
+                        username,
+                        address,
+                        goldGramWeight,
+                        amount,
+                        startDate,
+                        endDate,
+                        phoneNumber,
+                    };
+
+                    if (isEdit) {
+                        // Update existing entry in Firebase (use `update` for editing)
+                        await update(entryRef, newFormData);
+                    } else {
+                        // Create a new entry in Firebase (use `set` for creating)
+                        await set(entryRef, newFormData);
+                    }
+
+                    navigate("/create");
+
+                    // Optionally reset form fields after submission
+                    setApplicationNumber("");
+                    setUsername("");
+                    setAddress("");
+                    setGoldGramWeight("");
+                    setAmount("");
+                    setStartDate("");
+                    setEndDate("");
+                    setPhoneNumber("");
                 }
 
-                navigate("/create");
-
-                // Optionally reset form fields after submission
-                setApplicationNumber("");
-                setUsername("");
-                setAddress("");
-                setGoldGramWeight("");
-                setAmount("");
-                setStartDate("");
-                setEndDate("");
-                setPhoneNumber("");
-
             } catch (error) {
-                console.error("Error writing to Firebase: ", error);
+                console.error("Error checking or writing to Firebase: ", error);
             }
         }
     };
