@@ -182,6 +182,10 @@ label {
   padding: 8px;
 }
 
+.download-button {
+  margin-left: 10px;
+}
+
 .container {
   margin: 20px;
 }
