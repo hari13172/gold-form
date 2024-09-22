@@ -20,6 +20,7 @@ interface FormData {
     startDate: string;
     endDate: string;
     phoneNumber: string;
+    notes?: string; // New field to store textarea content
     borrowedMoney?: number;
     receivedMoney?: number;
     pendingMoney?: number;
@@ -40,6 +41,7 @@ function Form() {
     const [startDate, setStartDate] = useState<string>(formData?.startDate || "");
     const [endDate, setEndDate] = useState<string>(formData?.endDate || "");
     const [phoneNumber, setPhoneNumber] = useState<string>(formData?.phoneNumber || "");
+    const [notes, setNotes] = useState<string>(formData?.notes || "");  // New textarea field
 
     const [errors, setErrors] = useState<string[]>([]);
 
@@ -106,6 +108,7 @@ function Form() {
                         startDate,
                         endDate,
                         phoneNumber,
+                        notes,  // Adding the new textarea field
                         borrowedMoney: parseFloat(amount),  // Store the amount as borrowedMoney
                         receivedMoney: 0,                  // Initial value for receivedMoney
                         pendingMoney: parseFloat(amount),   // Initial pendingMoney is equal to borrowedMoney
@@ -143,6 +146,7 @@ function Form() {
         setStartDate("");
         setEndDate("");
         setPhoneNumber("");
+        setNotes(""); // Reset new textarea field
     };
 
     return (
@@ -239,6 +243,18 @@ function Form() {
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
                             className="input"
+                        />
+                    </div>
+
+                    {/* New Textarea Field */}
+                    <div className="form-group">
+                        <label>Notes</label>
+                        <textarea
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            className="input"
+                            rows={4}
+                            placeholder="Add any additional notes here..."
                         />
                     </div>
 

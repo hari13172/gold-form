@@ -21,6 +21,7 @@ interface FormData {
     amount: string;
     startDate: string;
     endDate: string;
+    notes: string;
     phoneNumber: string;
     borrowedMoney?: number;
     receivedMoney?: number;
@@ -275,6 +276,7 @@ function Create() {
                                 <th>Amount</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
+                                <th>Notes</th>
                                 <th>Phone Number</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -292,6 +294,7 @@ function Create() {
                                     <td>{data.amount}</td>
                                     <td>{data.startDate}</td>
                                     <td>{data.endDate}</td>
+                                    <td>{data.notes}</td>
                                     <td>{data.phoneNumber}</td>
                                     <td>
                                         <select
