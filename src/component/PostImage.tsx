@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { ref, set, push } from "firebase/database"; // Push to create a new entry
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage"; // For uploading the image
 import { database, storage } from "../firebase"; // Firebase storage and database
+import { ToastContainer, toast } from "react-toastify"; // Import Toastify
+import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
 import "../styles/PostImage.css";
 import Header from "./Header";
 
@@ -18,7 +20,7 @@ function PostImage() {
 
     const handlePost = async () => {
         if (!image || !description) {
-            alert("Please select an image and add a description.");
+            toast.error("Please select an image and add a description.");
             return;
         }
 
@@ -45,10 +47,10 @@ function PostImage() {
             // Reset fields after posting
             setImage(null);
             setDescription("");
-            alert("Image and description posted successfully!");
+            toast.success("Image and description posted successfully!");
         } catch (error) {
             console.error("Error posting image:", error);
-            alert("Error posting image. Please try again.");
+            toast.error("Error posting image. Please try again.");
         } finally {
             setUploading(false);
         }
@@ -81,6 +83,7 @@ function PostImage() {
                     {uploading ? "Posting..." : "Post"}
                 </button>
             </div>
+            <ToastContainer /> {/* Add ToastContainer for toast notifications */}
         </>
     );
 }

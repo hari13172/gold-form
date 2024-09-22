@@ -4,6 +4,27 @@ import { database } from "../firebase"; // Import Firebase database instance
 import "../styles/PostedData.css";
 import Header from "./Header";
 
+// Modal component for confirming deletion
+function ConfirmationModal({ isOpen, onClose, onConfirm }: any) {
+    if (!isOpen) return null;
+
+    return (
+        <div className="modal-overlay">
+            <div className="modal-content">
+                <h3>Are you sure you want to delete this post?</h3>
+                <div className="modal-actions">
+                    <button onClick={onConfirm} className="confirm-button">
+                        Yes, Delete
+                    </button>
+                    <button onClick={onClose} className="cancel-button">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 interface PostData {
     imageUrl: string;
     description: string;
@@ -14,6 +35,8 @@ function PostedData() {
     const [posts, setPosts] = useState<PostData[]>([]);
     const [loading, setLoading] = useState(true);
     const [minimizedPosts, setMinimizedPosts] = useState<{ [key: string]: boolean }>({});
+    const [showModal, setShowModal] = useState(false);
+    const [postToDelete, setPostToDelete] = useState<string | null>(null);
 
     useEffect(() => {
         const postsRef = ref(database, "posts");
@@ -30,22 +53,29 @@ function PostedData() {
         });
     }, []);
 
-    const handleDelete = (postKey: string) => {
-        const postRef = ref(database, `posts/${postKey}`);
-        remove(postRef)
-            .then(() => {
-                console.log("Post deleted successfully.");
-            })
-            .catch((error) => {
-                console.error("Error deleting post:", error);
-            });
+    const handleDeleteClick = (postKey: string) => {
+        setPostToDelete(postKey);
+        setShowModal(true);
     };
 
-    const toggleMinimize = (postKey: string) => {
-        setMinimizedPosts((prev) => ({
-            ...prev,
-            [postKey]: !prev[postKey],
-        }));
+    const handleConfirmDelete = () => {
+        if (postToDelete) {
+            const postRef = ref(database, `posts/${postToDelete}`);
+            remove(postRef)
+                .then(() => {
+                    console.log("Post deleted successfully.");
+                    setShowModal(false);
+                    setPostToDelete(null); // Reset the postToDelete after deletion
+                })
+                .catch((error) => {
+                    console.error("Error deleting post:", error);
+                });
+        }
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setPostToDelete(null); // Reset the postToDelete if deletion is canceled
     };
 
     return (
@@ -59,26 +89,21 @@ function PostedData() {
                     <div className="posts-grid">
                         {posts.map((post) => (
                             <div key={post.key} className="post-card">
-                                <div className="post-card-header">
-                                    <button
-                                        className="minimize-button"
-                                        onClick={() => toggleMinimize(post.key)}
-                                    >
-                                        {minimizedPosts[post.key] ? "+" : "-"}
-                                    </button>
-                                    <button
-                                        className="delete-button"
-                                        onClick={() => handleDelete(post.key)}
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
+
                                 {!minimizedPosts[post.key] && (
                                     <>
                                         <img src={post.imageUrl} alt="Posted" className="post-image" />
                                         <p className="post-description">{post.description}</p>
                                     </>
                                 )}
+                                <div className="post-card-header">
+                                    <button
+                                        className="delete-button"
+                                        onClick={() => handleDeleteClick(post.key)}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -86,6 +111,13 @@ function PostedData() {
                     <p>No posts available.</p>
                 )}
             </div>
+
+            {/* Confirmation Modal */}
+            <ConfirmationModal
+                isOpen={showModal}
+                onClose={handleCloseModal}
+                onConfirm={handleConfirmDelete}
+            />
         </>
     );
 }

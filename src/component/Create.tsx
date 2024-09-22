@@ -34,7 +34,7 @@ function Create() {
     const [submittedData, setSubmittedData] = useState<{ [key: string]: FormData }>({});
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [filteredData, setFilteredData] = useState<FormData[]>([]);
-    const [isLoading, setIsLoading] = useState(true); // Loading state
+    const [isLoading, setIsLoading] = useState(true);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isFinanceModalOpen, setIsFinanceModalOpen] = useState(false);
     const [selectedEntry, setSelectedEntry] = useState<FormData | null>(null);
@@ -214,7 +214,7 @@ function Create() {
     if (isLoading) {
         return (
             <div className="loading-container">
-                <div className="spinner"></div>
+                <div className="rotating-loader"></div>
                 <p>Loading...</p>
             </div>
         );

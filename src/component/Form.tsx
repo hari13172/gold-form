@@ -41,7 +41,8 @@ function Form() {
     const [startDate, setStartDate] = useState<string>(formData?.startDate || "");
     const [endDate, setEndDate] = useState<string>(formData?.endDate || "");
     const [phoneNumber, setPhoneNumber] = useState<string>(formData?.phoneNumber || "");
-    const [notes, setNotes] = useState<string>(formData?.notes || "");  // New textarea field
+    const [notes, setNotes] = useState<string>(formData?.notes || "");
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [errors, setErrors] = useState<string[]>([]);
 
@@ -91,6 +92,7 @@ function Form() {
         e.preventDefault();
 
         if (validateForm()) {
+            setIsLoading(true);
             try {
                 const entryRef = ref(database, `/entries/${applicationNumber}`);
                 const snapshot = await get(entryRef);  // Check if the entry already exists
@@ -132,6 +134,8 @@ function Form() {
 
             } catch (error) {
                 console.error("Error checking or writing to Firebase: ", error);
+            } finally {
+                setIsLoading(false); // Stop loading when done
             }
         }
     };
@@ -148,6 +152,8 @@ function Form() {
         setPhoneNumber("");
         setNotes(""); // Reset new textarea field
     };
+
+
 
     return (
         <>
