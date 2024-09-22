@@ -8,7 +8,6 @@ import "../styles/Create.css";
 import Header from "./Header";
 import Papa from "papaparse"; // For CSV conversion
 
-
 interface Payment {
     month: string;
     amountPaid: number;
@@ -33,6 +32,7 @@ function Create() {
     const [submittedData, setSubmittedData] = useState<{ [key: string]: FormData }>({});
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [filteredData, setFilteredData] = useState<FormData[]>([]);
+    const [isLoading, setIsLoading] = useState(true); // Loading state
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isFinanceModalOpen, setIsFinanceModalOpen] = useState(false);
     const [selectedEntry, setSelectedEntry] = useState<FormData | null>(null);
@@ -41,7 +41,7 @@ function Create() {
     const [pendingMoney, setPendingMoney] = useState<number>(0);
     const [currentPayment, setCurrentPayment] = useState<number>(0);
     const [paymentHistory, setPaymentHistory] = useState<Payment[]>([]);
-    const [loading, setLoading] = useState(false); // To handle download button state
+    const [loadingCSV, setLoadingCSV] = useState(false); // To handle download button state
     const navigate = useNavigate();
 
     // Load data from Firebase on component mount
@@ -50,13 +50,14 @@ function Create() {
         onValue(entriesRef, (snapshot) => {
             const data = snapshot.val() || {};
             setSubmittedData(data); // Set state with fresh data from Firebase
+            setIsLoading(false);    // Stop loading animation when data is fetched
         });
     }, []);
 
     useEffect(() => {
-        const filtered = Object.values(submittedData).filter((data) =>
-            data.phoneNumber.includes(searchTerm)
-        );
+        const filtered = Object.values(submittedData)
+            .filter((data) => data.phoneNumber.includes(searchTerm))
+            .reverse();  // Reverse the array to show the most recent entries first
         setFilteredData(filtered);
     }, [searchTerm, submittedData]);
 
@@ -138,18 +139,18 @@ function Create() {
                     console.log("Data saved to Firebase successfully");
                     // Update the state with the new entry data immediately
                     setSubmittedData(newSubmittedData);
+                    setCurrentPayment(0); // Reset current payment field
                 })
                 .catch((error) => {
                     console.error("Error saving to Firebase: ", error);
                 });
-
         }
 
         setIsFinanceModalOpen(false);
     };
 
     const handleDownloadCSV = () => {
-        setLoading(true);
+        setLoadingCSV(true);
 
         // Define the order of the fields you want in the CSV
         const dataToExport = Object.values(submittedData).map((entry) => ({
@@ -166,7 +167,7 @@ function Create() {
         // If no data available, show an alert
         if (dataToExport.length === 0) {
             alert("No data available for export.");
-            setLoading(false);
+            setLoadingCSV(false);
             return;
         }
 
@@ -185,13 +186,23 @@ function Create() {
         link.click();
         document.body.removeChild(link);
 
-        setLoading(false);
+        setLoadingCSV(false);
     };
 
     // Navigate to View Details page with the selected data
     const handleViewDetails = (data: FormData) => {
         navigate("/viewdetails", { state: { ...data } });
     };
+
+    // If the data is still loading, show the loading spinner
+    if (isLoading) {
+        return (
+            <div className="loading-container">
+                <div className="spinner"></div>
+                <p>Loading...</p>
+            </div>
+        );
+    }
 
     return (
         <>
@@ -230,9 +241,9 @@ function Create() {
                         type="button"
                         className="download-button"
                         onClick={handleDownloadCSV}
-                        disabled={loading}
+                        disabled={loadingCSV}
                     >
-                        {loading ? "Downloading..." : "Download CSV"}
+                        {loadingCSV ? "Downloading..." : "Download CSV"}
                     </button>
                 </div>
             </div>

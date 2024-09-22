@@ -7,6 +7,8 @@ import ProtectedRoute from "./Auth/ProtectedRoute";
 import DueDate from "./component/DueDate";
 import ViewDetails from "./component/ViewDetails";
 import './App.css'
+import PostImage from "./component/PostImage";
+import PostedData from "./component/PostedData";
 
 const App: React.FC = () => {
   return (
@@ -52,6 +54,25 @@ const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <ViewDetails />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/postimage"
+            element={
+              <ProtectedRoute>
+                <PostImage />
+              </ProtectedRoute>
+            }
+          />
+
+
+          <Route
+            path="/posteddata"
+            element={
+              <ProtectedRoute>
+                <PostedData />
               </ProtectedRoute>
             }
           />

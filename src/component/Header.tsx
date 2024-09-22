@@ -27,6 +27,12 @@ const Header: React.FC = () => {
                     <li>
                         <Link to="/duedate">Due Date</Link>
                     </li>
+                    <li>
+                        <Link to="/postimage">PostImage</Link>
+                    </li>
+                    <li>
+                        <Link to="/posteddata">PostedData</Link>
+                    </li>
 
                     {/* <li>
                         <Link to="/viewDetails">View Details</Link>

@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ref, update, set, get } from "firebase/database"; // Firebase methods for database
 // @ts-ignore
@@ -97,6 +97,10 @@ function Form() {
                         startDate,
                         endDate,
                         phoneNumber,
+                        borrowedMoney: parseFloat(amount),  // Store the amount as borrowedMoney
+                        receivedMoney: 0,                  // Initial value for receivedMoney
+                        pendingMoney: parseFloat(amount),   // Initial pendingMoney is equal to borrowedMoney
+                        paymentHistory: [],                 // Empty payment history on new entry
                     };
 
                     if (isEdit) {
