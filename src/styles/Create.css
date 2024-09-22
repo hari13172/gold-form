@@ -144,6 +144,11 @@ label {
   margin-top: 20px;
 }
 
+.gap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .confirm-button {
   background-color: #007bff;
   color: white;
@@ -180,10 +185,17 @@ label {
   margin-top: 10px;
   width: 30%;
   padding: 8px;
+  cursor: pointer;
 }
 
 .download-button {
-  margin-left: 10px;
+  background-color: orange;
+  border: none;
+  outline: none;
+  margin-top: 10px;
+  width: 30%;
+  padding: 8px;
+  cursor: pointer;
 }
 
 .container {

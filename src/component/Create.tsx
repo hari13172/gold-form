@@ -148,11 +148,20 @@ function Create() {
         setIsFinanceModalOpen(false);
     };
 
-    // CSV download handler (uses local submittedData, not fetching again)
     const handleDownloadCSV = () => {
         setLoading(true);
 
-        const dataToExport = Object.values(submittedData) as FormData[];
+        // Define the order of the fields you want in the CSV
+        const dataToExport = Object.values(submittedData).map((entry) => ({
+            "Application Number": entry.applicationNumber,
+            "Username": entry.username,
+            "Address": entry.address,
+            "Gold Gram Weight": entry.goldGramWeight,
+            "Amount": entry.amount,
+            "Start Date": entry.startDate,
+            "End Date": entry.endDate,
+            "Phone Number": entry.phoneNumber,
+        }));
 
         // If no data available, show an alert
         if (dataToExport.length === 0) {
@@ -208,22 +217,24 @@ function Create() {
                     Add New Entry
                 </button>
 
-                <button
-                    type="button"
-                    className="due-button"
-                    onClick={() => navigate("/duedate")}
-                >
-                    Due Date
-                </button>
+                <div className="gap">
+                    <button
+                        type="button"
+                        className="due-button"
+                        onClick={() => navigate("/duedate")}
+                    >
+                        Due Date
+                    </button>
 
-                <button
-                    type="button"
-                    className="download-button"
-                    onClick={handleDownloadCSV}
-                    disabled={loading}
-                >
-                    {loading ? "Downloading..." : "Download CSV"}
-                </button>
+                    <button
+                        type="button"
+                        className="download-button"
+                        onClick={handleDownloadCSV}
+                        disabled={loading}
+                    >
+                        {loading ? "Downloading..." : "Download CSV"}
+                    </button>
+                </div>
             </div>
 
             <div className="table-container">
