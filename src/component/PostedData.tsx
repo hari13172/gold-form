@@ -88,13 +88,8 @@ function PostedData() {
                     <div className="posts-grid">
                         {posts.map((post) => (
                             <div key={post.key} className="post-card">
-
-                                {[post.key] && (
-                                    <>
-                                        <img src={post.imageUrl} alt="Posted" className="post-image" />
-                                        <p className="post-description">{post.description}</p>
-                                    </>
-                                )}
+                                <img src={post.imageUrl} alt="Posted" className="post-image" />
+                                <p className="post-description">{post.description}</p>
                                 <div className="post-card-header">
                                     <button
                                         className="delete-button"
