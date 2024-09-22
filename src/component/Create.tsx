@@ -6,6 +6,8 @@ import { ref, onValue, remove, set } from "firebase/database"; // Import set for
 import { database } from "../firebase"; // Import your Firebase database instance
 import "../styles/Create.css";
 import Header from "./Header";
+import Papa from "papaparse"; // For CSV conversion
+
 
 interface Payment {
     month: string;
@@ -39,6 +41,7 @@ function Create() {
     const [pendingMoney, setPendingMoney] = useState<number>(0);
     const [currentPayment, setCurrentPayment] = useState<number>(0);
     const [paymentHistory, setPaymentHistory] = useState<Payment[]>([]);
+    const [loading, setLoading] = useState(false); // To handle download button state
     const navigate = useNavigate();
 
     // Load data from Firebase on component mount
@@ -145,6 +148,37 @@ function Create() {
         setIsFinanceModalOpen(false);
     };
 
+    // CSV download handler (uses local submittedData, not fetching again)
+    const handleDownloadCSV = () => {
+        setLoading(true);
+
+        const dataToExport = Object.values(submittedData) as FormData[];
+
+        // If no data available, show an alert
+        if (dataToExport.length === 0) {
+            alert("No data available for export.");
+            setLoading(false);
+            return;
+        }
+
+        // Convert data to CSV format using PapaParse
+        const csv = Papa.unparse(dataToExport);
+
+        // Create a blob from the CSV data
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+
+        // Create an anchor element and click it to download the file
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "submitted_data.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        setLoading(false);
+    };
+
     // Navigate to View Details page with the selected data
     const handleViewDetails = (data: FormData) => {
         navigate("/viewdetails", { state: { ...data } });
@@ -180,6 +214,15 @@ function Create() {
                     onClick={() => navigate("/duedate")}
                 >
                     Due Date
+                </button>
+
+                <button
+                    type="button"
+                    className="download-button"
+                    onClick={handleDownloadCSV}
+                    disabled={loading}
+                >
+                    {loading ? "Downloading..." : "Download CSV"}
                 </button>
             </div>
 
