@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import React, { useState, FormEvent } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ref, update, set, get } from "firebase/database"; // Firebase methods for database
 // @ts-ignore
@@ -107,23 +107,29 @@ function Form() {
                         await set(entryRef, newFormData);
                     }
 
+                    // After success, navigate back to the main create page
                     navigate("/create");
 
                     // Optionally reset form fields after submission
-                    setApplicationNumber("");
-                    setUsername("");
-                    setAddress("");
-                    setGoldGramWeight("");
-                    setAmount("");
-                    setStartDate("");
-                    setEndDate("");
-                    setPhoneNumber("");
+                    resetForm();
                 }
 
             } catch (error) {
                 console.error("Error checking or writing to Firebase: ", error);
             }
         }
+    };
+
+    // Reset form fields after submission
+    const resetForm = () => {
+        setApplicationNumber("");
+        setUsername("");
+        setAddress("");
+        setGoldGramWeight("");
+        setAmount("");
+        setStartDate("");
+        setEndDate("");
+        setPhoneNumber("");
     };
 
     return (
