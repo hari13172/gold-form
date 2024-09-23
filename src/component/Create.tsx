@@ -43,6 +43,7 @@ function Create() {
     const [pendingMoney, setPendingMoney] = useState<number>(0);
     const [currentPayment, setCurrentPayment] = useState<number>(0);
     const [paymentHistory, setPaymentHistory] = useState<Payment[]>([]);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loadingCSV, setLoadingCSV] = useState(false); // To handle download button state
     const navigate = useNavigate();
 
@@ -109,9 +110,25 @@ function Create() {
         setIsFinanceModalOpen(true);
     };
 
+    // Validate the current payment before submitting
+    const validatePayment = (): boolean => {
+        if (currentPayment + receivedMoney > borrowedMoney) {
+            setErrorMessage("Current payment exceeds the borrowed amount.");
+            return false;
+        }
+        setErrorMessage(null); // Clear the error message if validation passes
+        return true;
+    };
+
     // Save the finance data into the selected entry and update Firebase & local state immediately
-    const handleFinanceSubmit = () => {
+    const handleFinanceSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         if (selectedEntry) {
+
+            // Check if the payment is valid
+            if (!validatePayment()) {
+                return; // Prevent submission if the payment is invalid
+            }
             // Add the current payment to the payment history
             const newPayment = {
                 month: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
@@ -389,6 +406,7 @@ function Create() {
                                     onChange={(e) => setCurrentPayment(parseFloat(e.target.value))}
                                     required
                                 />
+                                {errorMessage && <p className="error-text">{errorMessage}</p>}
                             </div>
                             <div className="modal-actions">
                                 <button type="submit" className="confirm-button">Submit</button>
